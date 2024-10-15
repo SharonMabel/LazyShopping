@@ -1,9 +1,17 @@
 // Beispiel für Rezepte - kann später dynamisch gemacht werden
 const rezepte = [
-    { name: "Sushi-Bowl", zutaten: ["Reis", "Avocado", "Lachs", "Sojasauce"] },
-    { name: "Gulasch", zutaten: ["Rindfleisch", "Zwiebeln", "Paprika", "Tomatenmark"] },
-    { name: "Zwiebelbaguette mit Salat", zutaten: ["Baguette", "Zwiebeln", "Salat", "Tomaten"] }
+    { 
+        name: "Sushi-Bowl", 
+        zutaten: [
+            { name: "Reis", menge: "200g", abteilung: "Reis" },
+            { name: "Avocado", menge: "1 Stück", abteilung: "Obst und Gemüse" },
+            { name: "Lachs", menge: "100g", abteilung: "Fisch" },
+            { name: "Sojasauce", menge: "nach Bedarf", abteilung: "Saucen" }
+        ] 
+    },
+    // Weitere Rezepte hier ...
 ];
+
 
 // Funktion zum Anzeigen der Rezeptauswahl
 function zeigeRezeptAuswahl() {
@@ -40,10 +48,10 @@ document.addEventListener('DOMContentLoaded', zeigeRezeptAuswahl);
 
 // Funktion zur Erstellung der Einkaufsliste
 function erstelleEinkaufsliste() {
-    const selectedRecipes = []; // Array für ausgewählte Rezepte
-    const shoppingList = {}; // Objekt für Einkaufsliste
+    const selectedRecipes = [];
+    const shoppingList = {};
 
-    // Gehe durch alle Checkboxes und prüfe, ob sie ausgewählt sind
+    // Auswahl der Rezepte
     rezepte.forEach((rezept, index) => {
         const checkbox = document.getElementById(`rezept-${index}`);
         if (checkbox.checked) {
@@ -51,36 +59,29 @@ function erstelleEinkaufsliste() {
         }
     });
 
-    // Zutaten der ausgewählten Rezepte zur Einkaufsliste hinzufügen
+    // Zutaten zu Einkaufsliste hinzufügen, gruppiert nach Abteilung
     selectedRecipes.forEach(rezept => {
         rezept.zutaten.forEach(zutat => {
-            if (shoppingList[zutat]) {
-                shoppingList[zutat] += 1; // Menge erhöhen, falls Zutat bereits vorhanden
-            } else {
-                shoppingList[zutat] = 1; // Zutat hinzufügen, falls noch nicht vorhanden
+            if (!shoppingList[zutat.abteilung]) {
+                shoppingList[zutat.abteilung] = [];
             }
+            shoppingList[zutat.abteilung].push(`${zutat.name}: ${zutat.menge}`);
         });
     });
 
-    // Einkaufsliste im HTML anzeigen
+    // Einkaufsliste anzeigen, sortiert nach Abteilung
     const shoppingListSection = document.getElementById('shopping-list');
-    shoppingListSection.innerHTML = ''; // Abschnitt leeren, falls bereits eine Liste vorhanden ist
+    shoppingListSection.innerHTML = '';
 
-    // Überschrift hinzufügen
-    const title = document.createElement('h3');
-    title.textContent = "Deine Einkaufsliste";
-    shoppingListSection.appendChild(title);
+    for (const [abteilung, items] of Object.entries(shoppingList)) {
+        const abteilungTitle = document.createElement('h4');
+        abteilungTitle.textContent = abteilung;
+        shoppingListSection.appendChild(abteilungTitle);
 
-    // Zutaten anzeigen
-    for (const [zutat, menge] of Object.entries(shoppingList)) {
-        const listItem = document.createElement('p');
-        listItem.textContent = `${zutat}: ${menge}`;
-        shoppingListSection.appendChild(listItem);
+        items.forEach(item => {
+            const listItem = document.createElement('p');
+            listItem.textContent = item;
+            shoppingListSection.appendChild(listItem);
+        });
     }
 }
-
-// Button hinzufügen, um die Einkaufsliste zu generieren
-const button = document.createElement('button');
-button.textContent = 'Einkaufsliste erstellen';
-button.addEventListener('click', erstelleEinkaufsliste);
-document.getElementById('recipe-selection').appendChild(button);
