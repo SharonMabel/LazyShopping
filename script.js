@@ -23,6 +23,14 @@ function zeigeRezeptAuswahl() {
         recipeSection.appendChild(label);
         recipeSection.appendChild(document.createElement('br'));
     });
+
+    // Button erstellen, um die Einkaufsliste zu generieren
+    const button = document.createElement('button');
+    button.textContent = 'Einkaufsliste erstellen';
+    button.addEventListener('click', erstelleEinkaufsliste);
+
+    // Button am Ende des Abschnitts hinzufügen, damit er unter allen Checkboxen ist
+    recipeSection.appendChild(button);
 }
 
 // Aufrufen der Funktion beim Laden der Seite
