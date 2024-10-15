@@ -8,7 +8,11 @@ const rezepte = [
 // Funktion zum Anzeigen der Rezeptauswahl
 function zeigeRezeptAuswahl() {
     const recipeSection = document.getElementById('recipe-selection');
-    
+
+    // Lösche vorherige Inhalte im Bereich (inklusive alter Button)
+    recipeSection.innerHTML = '';
+
+    // Rezept-Checkboxen erstellen
     rezepte.forEach((rezept, index) => {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -24,15 +28,13 @@ function zeigeRezeptAuswahl() {
         recipeSection.appendChild(document.createElement('br'));
     });
 
-    // Button erstellen, um die Einkaufsliste zu generieren
+    // Button erstellen und unter den Rezepten hinzufügen
     const button = document.createElement('button');
     button.textContent = 'Einkaufsliste erstellen';
     button.addEventListener('click', erstelleEinkaufsliste);
 
-    // Button am Ende des Abschnitts hinzufügen, damit er unter allen Checkboxen ist
     recipeSection.appendChild(button);
 }
-
 // Aufrufen der Funktion beim Laden der Seite
 document.addEventListener('DOMContentLoaded', zeigeRezeptAuswahl);
 
