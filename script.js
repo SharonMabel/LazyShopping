@@ -159,3 +159,55 @@ function erstelleEinkaufsliste() {
         ]
     }
 ];
+function erstelleEinkaufsliste() {
+    const selectedRecipes = [];
+    const shoppingList = {};
+
+    // Auswahl der Rezepte
+    rezepte.forEach((rezept, index) => {
+        const checkbox = document.getElementById(`rezept-${index}`);
+        if (checkbox.checked) {
+            selectedRecipes.push(rezept);
+        }
+    });
+
+    // Zutaten zu Einkaufsliste hinzufügen, gruppiert nach Abteilung
+    selectedRecipes.forEach(rezept => {
+        rezept.zutaten.forEach(zutat => {
+            if (!shoppingList[zutat.abteilung]) {
+                shoppingList[zutat.abteilung] = [];
+            }
+            shoppingList[zutat.abteilung].push(`${zutat.name}: ${zutat.menge}`);
+        });
+    });
+
+    // Zonenreihenfolge definieren
+    const zonenReihenfolge = [
+        "Frische Nudeln und Säfte", "Obst und Gemüse", "Brot und Backwaren", "Haferflocken, Reformkost", 
+        "Kaffee", "Tee", "Frische Brötchen", "Fleischtheke", "Käsetheke", "Fischtheke", 
+        "Abgepacktes Fleisch (Huhn, Pute, Schwein, Rind)", "Ländespezifisches (Russland, USA, China)", 
+        "Getränke", "Essig & Öl", "Gewürze", "Süßigkeiten", "Wein", "Nudeln", 
+        "Gemüsebrühe und Fixtüten (Maggi, Knorr)", "Reis", "Konserven", "Zucker, Mehl", 
+        "Joghurt", "Sahne", "Milch", "Käse", "Lachs und Feinkost", "Aufschnitt", 
+        "H-Milch, Milchersatz", "Nüsse und getrocknete Früchte", "Drogerie", "Haushaltswaren & Nonfood", 
+        "Tiefkühlprodukte"
+    ];
+
+    // Einkaufsliste anzeigen, sortiert nach Zonen
+    const shoppingListSection = document.getElementById('shopping-list');
+    shoppingListSection.innerHTML = '';
+
+    zonenReihenfolge.forEach(zone => {
+        if (shoppingList[zone]) {
+            const zoneTitle = document.createElement('h4');
+            zoneTitle.textContent = zone;
+            shoppingListSection.appendChild(zoneTitle);
+
+            shoppingList[zone].forEach(item => {
+                const listItem = document.createElement('p');
+                listItem.textContent = item;
+                shoppingListSection.appendChild(listItem);
+            });
+        }
+    });
+}
