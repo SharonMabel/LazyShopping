@@ -171,15 +171,26 @@ function erstelleEinkaufsliste() {
         }
     });
 
-    // Zutaten zu Einkaufsliste hinzufügen, gruppiert nach Abteilung und Menge summieren
+    // Zutaten zu Einkaufsliste hinzufügen, Mengen addieren
     selectedRecipes.forEach(rezept => {
         rezept.zutaten.forEach(zutat => {
             if (!shoppingList[zutat.abteilung]) {
                 shoppingList[zutat.abteilung] = {};
             }
+
+            // Extrahiere Menge und Einheit
+            const mengeMatch = zutat.menge.match(/(\d+)(\D*)/);
+            const menge = mengeMatch ? parseInt(mengeMatch[1]) : 0;
+            const einheit = mengeMatch ? mengeMatch[2].trim() : '';
+
             if (shoppingList[zutat.abteilung][zutat.name]) {
-                // Menge addieren, falls Zutat schon vorhanden ist
-                shoppingList[zutat.abteilung][zutat.name] += ` + ${zutat.menge}`;
+                // Vorherige Menge extrahieren und addieren
+                const previousMengeMatch = shoppingList[zutat.abteilung][zutat.name].match(/(\d+)(\D*)/);
+                const previousMenge = previousMengeMatch ? parseInt(previousMengeMatch[1]) : 0;
+
+                // Neue Menge zusammensetzen
+                const totalMenge = previousMenge + menge;
+                shoppingList[zutat.abteilung][zutat.name] = `${totalMenge}${einheit}`;
             } else {
                 // Zutat und Menge hinzufügen
                 shoppingList[zutat.abteilung][zutat.name] = zutat.menge;
@@ -191,7 +202,7 @@ function erstelleEinkaufsliste() {
     const zonenReihenfolge = [
         "Frische Nudeln und Säfte", "Obst und Gemüse", "Brot und Backwaren", "Haferflocken, Reformkost", 
         "Kaffee", "Tee", "Frische Brötchen", "Fleischtheke", "Käsetheke", "Fischtheke", 
-        "Abgepacktes Fleisch (Huhn, Pute, Schwein, Rind)", "Ländespezifisches (Russland, USA, China)", 
+        "Abgepacktes Fleisch (Huhn, Pute, Schwein, Rind)", "Länderspezifisches (Russland, USA, China)", 
         "Getränke", "Essig & Öl", "Gewürze", "Süßigkeiten", "Wein", "Nudeln", 
         "Gemüsebrühe und Fixtüten (Maggi, Knorr)", "Reis", "Konserven", "Zucker, Mehl", 
         "Joghurt", "Sahne", "Milch", "Käse", "Lachs und Feinkost", "Aufschnitt", 
@@ -217,4 +228,3 @@ function erstelleEinkaufsliste() {
         }
     });
 }
-
