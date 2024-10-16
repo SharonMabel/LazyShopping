@@ -171,13 +171,19 @@ function erstelleEinkaufsliste() {
         }
     });
 
-    // Zutaten zu Einkaufsliste hinzufügen, gruppiert nach Abteilung
+    // Zutaten zu Einkaufsliste hinzufügen, gruppiert nach Abteilung und Menge summieren
     selectedRecipes.forEach(rezept => {
         rezept.zutaten.forEach(zutat => {
             if (!shoppingList[zutat.abteilung]) {
-                shoppingList[zutat.abteilung] = [];
+                shoppingList[zutat.abteilung] = {};
             }
-            shoppingList[zutat.abteilung].push(`${zutat.name}: ${zutat.menge}`);
+            if (shoppingList[zutat.abteilung][zutat.name]) {
+                // Menge addieren, falls Zutat schon vorhanden ist
+                shoppingList[zutat.abteilung][zutat.name] += ` + ${zutat.menge}`;
+            } else {
+                // Zutat und Menge hinzufügen
+                shoppingList[zutat.abteilung][zutat.name] = zutat.menge;
+            }
         });
     });
 
@@ -203,11 +209,12 @@ function erstelleEinkaufsliste() {
             zoneTitle.textContent = zone;
             shoppingListSection.appendChild(zoneTitle);
 
-            shoppingList[zone].forEach(item => {
+            for (const [itemName, menge] of Object.entries(shoppingList[zone])) {
                 const listItem = document.createElement('p');
-                listItem.textContent = item;
+                listItem.textContent = `${itemName}: ${menge}`;
                 shoppingListSection.appendChild(listItem);
-            });
+            }
         }
     });
 }
+
